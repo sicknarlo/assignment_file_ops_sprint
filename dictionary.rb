@@ -32,23 +32,31 @@ class Dictionary
 			result = nil
 			puts "What word would you like to search for? "
 			word_to_search = gets.chomp
-			puts word_to_search
-			puts "What type of search (exact match, partial match, begins with, ends with)? "
+			result = search_type(analyze, word_to_search)
+			puts result
+			puts "Save result? [Y/N]"
+			save(result) if gets.chomp.downcase == "y"
+
+		end
+
+
+	def search_type(analyze, word_to_search)
+		puts "What type of search (exact match, partial match, begins with, ends with)? "
 			search_type = gets.chomp
 			case search_type
 				when "exact match"
-					result = analyze.search(word_to_search, :exact_match => true)
+					result = analyze.exact_match(word_to_search)
 				when "partial match"
-					result = analyze.search(word_to_search, :partial_match => true)
+					result = analyze.partial_match(word_to_search)
 				when "begins with"
-					result = analyze.search(word_to_search, :begins_with => true)
+					result = analyze.begins_with(word_to_search)
 				when "ends with"
-					result = analyze.search(word_to_search, :ends_with => true)
+					result = analyze.ends_with(word_to_search)
 				else
 					return "Invalid entry"
 			end
-			save(result) if puts "Save result? [Y/N]" == "Y"
-		end
+			result
+	end
 
 	def save(result)
  		puts "What would you like to name your file?"
@@ -80,12 +88,12 @@ class DictionaryAnalyzer
 		end
 	end
 
-	def search(word, options = {})
-		return exact_match(word) if options[:exact_match]
-		return partial_match(word) if options[:partial_match]
-		return begins_with(word) if options[:begins_with]
-		return ends_with(word) if options[:ends_with]
-	end
+	# def search(word, options = {})
+	# 	return exact_match(word) if options[:exact_match]
+	# 	return partial_match(word) if options[:partial_match]
+	# 	return begins_with(word) if options[:begins_with]
+	# 	return ends_with(word) if options[:ends_with]
+	# end
 
 	def exact_match(word)				#/\b"#{word}"\b/
 		@words.each do |word_from_dict|
