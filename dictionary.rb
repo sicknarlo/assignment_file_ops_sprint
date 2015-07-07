@@ -53,16 +53,19 @@ class DictionaryAnalyzer
 	end
 
 	def search(word, options = {})
-		exact_match(word) if options[:exact_match]
+		if options[:exact_match] == true
+			exact_match(word)
+		end
 		partial_match(word) if options[:partial_match]
 		begins_with(word) if options[:begins_with]
 		ends_with(word) if options[:ends_with]
 	end
 
-	def exact_match?(word)				#/\b"#{word}"\b/
+	def exact_match(word)				#/\b"#{word}"\b/
 		@words.each do |word_from_dict|
 			return word_from_dict if word_from_dict == word
 		end
+		puts "No match"
 	end
 
 	def partial_match(word)				#/"#{word}"/
@@ -72,5 +75,22 @@ class DictionaryAnalyzer
 		end
 		return result
 	end
+
+	def begins_with(word)
+		result = []
+		@words.each do |word_from_dict|
+			result << word_from_dict unless word_from_dict.match(/^#{Regexp.quote(word)}\w+/).nil?
+		end
+		result
+	end
+
+	def ends_with(word)
+		result = []
+		@words.each do |word_from_dict|
+			result << word_from_dict unless word_from_dict.match(/\w+#{Regexp.quote(word)}$/).nil?
+		end
+		result
+	end
+
 
 end
