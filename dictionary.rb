@@ -33,5 +33,34 @@ end
 
 class DictionaryAnalyzer
 
+	attr_reader :words
+
+	def load_words
+		dict = DictionaryLoader.new
+		@words = dict.load_words
+	end
+
+	# Word Stats
+	def stats(options = {})
+		@words.length if options[:word_count]
+		if options[:words_per_letter]
+			p "Enter a letter >>"
+			char = gets.chomp.upcase
+			@words.count {|word| word[0].upcase == "#{char}"}
+		end
+	end
+
+	def search(word, options={})
+		exact_match(word) if options[:exact_match]
+		partial_match(word) if options[:partial_match]
+		begins_with(word) if options[:begins_with]
+		ends_with(word) if options[:ends_with]
+	end
+
+	def exact_match?(word)
+		@words.each do |word_from_dict|
+			return true unless word_from_dict.match(/word/).nil?
+		end
+	end
 
 end
