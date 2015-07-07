@@ -27,7 +27,8 @@
 require_relative './dictionary_loader.rb'
 
 class Dictionary
-
+		# a = DictionaryAnalyzer.new
+		# a.stats({:})
 end
 
 
@@ -35,9 +36,10 @@ class DictionaryAnalyzer
 
 	attr_reader :words
 
-	def load_words
+	def load_dictionary
 		dict = DictionaryLoader.new
 		@words = dict.load_words
+		# p @words
 	end
 
 	# Word Stats
@@ -50,17 +52,25 @@ class DictionaryAnalyzer
 		end
 	end
 
-	def search(word, options={})
+	def search(word, options = {})
 		exact_match(word) if options[:exact_match]
 		partial_match(word) if options[:partial_match]
 		begins_with(word) if options[:begins_with]
 		ends_with(word) if options[:ends_with]
 	end
 
-	def exact_match?(word)
+	def exact_match?(word)				#/\b"#{word}"\b/
 		@words.each do |word_from_dict|
-			return true unless word_from_dict.match(/word/).nil?
+			return word_from_dict if word_from_dict == word
 		end
+	end
+
+	def partial_match(word)				#/"#{word}"/
+		result = []
+		@words.each do |word_from_dict|
+			result << word_from_dict if word_from_dict.include?(word)
+		end
+		return result
 	end
 
 end

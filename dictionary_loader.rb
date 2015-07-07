@@ -10,6 +10,7 @@ class DictionaryLoader
 		file_lines.each do |word|
 			@words << word.strip
 	 	end
+	 	@words
  	end
 
 end
