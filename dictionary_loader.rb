@@ -13,5 +13,11 @@ class DictionaryLoader
 	 	@words
  	end
 
+ 	def save(result, filename)
+ 		File.open(filename,"w") do |file|
+    	file.write result
+  	end
+	end
+
 end
 

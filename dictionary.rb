@@ -27,8 +27,36 @@
 require_relative './dictionary_loader.rb'
 
 class Dictionary
-		# a = DictionaryAnalyzer.new
-		# a.stats({:})
+		def run
+			analyze = DictionaryAnalyzer.new
+			result = nil
+			puts "What word would you like to search for? "
+			word_to_search = gets.chomp
+			puts word_to_search
+			puts "What type of search (exact match, partial match, begins with, ends with)? "
+			search_type = gets.chomp
+			case search_type
+				when "exact match"
+					result = analyze.search(word_to_search, :exact_match => true)
+				when "partial match"
+					result = analyze.search(word_to_search, :partial_match => true)
+				when "begins with"
+					result = analyze.search(word_to_search, :begins_with => true)
+				when "ends with"
+					result = analyze.search(word_to_search, :ends_with => true)
+				else
+					return "Invalid entry"
+			end
+			save(result) if puts "Save result? [Y/N]" == "Y"
+		end
+
+	def save(result)
+ 		puts "What would you like to name your file?"
+ 		filename = gets.chomp
+ 		File.open(filename+".txt","w") do |file|
+    		file.write result
+  		end
+	end
 end
 
 
@@ -36,7 +64,7 @@ class DictionaryAnalyzer
 
 	attr_reader :words
 
-	def load_dictionary
+	def initialize
 		dict = DictionaryLoader.new
 		@words = dict.load_words
 		# p @words
@@ -53,12 +81,10 @@ class DictionaryAnalyzer
 	end
 
 	def search(word, options = {})
-		if options[:exact_match] == true
-			exact_match(word)
-		end
-		partial_match(word) if options[:partial_match]
-		begins_with(word) if options[:begins_with]
-		ends_with(word) if options[:ends_with]
+		return exact_match(word) if options[:exact_match]
+		return partial_match(word) if options[:partial_match]
+		return begins_with(word) if options[:begins_with]
+		return ends_with(word) if options[:ends_with]
 	end
 
 	def exact_match(word)				#/\b"#{word}"\b/
@@ -68,18 +94,18 @@ class DictionaryAnalyzer
 		puts "No match"
 	end
 
-	def partial_match(word)				#/"#{word}"/
+	def partial_match(word)				#/#{word}/
 		result = []
 		@words.each do |word_from_dict|
 			result << word_from_dict if word_from_dict.include?(word)
 		end
-		return result
+		result
 	end
 
 	def begins_with(word)
 		result = []
 		@words.each do |word_from_dict|
-			result << word_from_dict unless word_from_dict.match(/^#{Regexp.quote(word)}\w+/).nil?
+			result << word_from_dict unless word_from_dict.match(/^#{word}\w+/).nil?
 		end
 		result
 	end
@@ -91,6 +117,7 @@ class DictionaryAnalyzer
 		end
 		result
 	end
-
-
 end
+
+a = Dictionary.new
+a.run
